@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
     float addValueAtClick = 0.00125f;
     float value = 0.0f;
 
+    [SerializeField]
+    
     private void Start()
     {
         FillBar();
@@ -47,16 +50,15 @@ public class GameManager : MonoBehaviour
         {
             print("Gift is 800");
             EventHandler.Instance.InvokeOnGiftBoxShakeAnimation(800);
+            
         }
-        else
+        if (value < 1)
         {
-            print("Game is complete");
+            value = value + (addValueAtClick * 7);
+            SetFillData(value);
+            SetClickCount(clickCount);
+            FillBar();
         }
-        value = value + (addValueAtClick * 7);
-        SetFillData(value);
-        SetClickCount(clickCount);
-        //print("Click Count "+ clickCount);
-        FillBar();
         
     }
 
@@ -65,17 +67,19 @@ public class GameManager : MonoBehaviour
         print("Clicked on Reset Button");
         SetFillData(0.0f);
         SetClickCount(0);
+        EventHandler.Instance.InvokeOnResetGiftBoxStatus();
         FillBar();
         
     }
 
     void FillBar()
     {
-        bar.transform.localScale = new Vector3(1f, GetFillData());
+        bar.transform.localScale = new Vector3(0.30f, GetFillData());
     }
 
     void SetFillData(float value)
     {
+        
         PlayerPrefs.SetFloat("value", value);
     }
 
