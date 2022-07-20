@@ -9,8 +9,15 @@ public class ShakeGiftBox : MonoBehaviour
     [SerializeField]
     float duration = 1f;
     [SerializeField]
+    bool isUnlock = false;
+    [SerializeField]
+    bool isShaked = false;
+    [SerializeField]
+    bool previousOpen = false;
+    [SerializeField]
     AnimationCurve animationCurve;
     float elapsedTime = 0f;
+
 
 
     
@@ -18,11 +25,31 @@ public class ShakeGiftBox : MonoBehaviour
     private void OnEnable()
     {
         EventHandler.OnGiftBoxShakeAnimation += ListenerOnGiftBoxShakeAnimation;
+        EventHandler.OnNextGiftColliderShake += ListenerOnNextGiftColliderShake;
     }
     private void OnDisable()
     {
         EventHandler.OnGiftBoxShakeAnimation -= ListenerOnGiftBoxShakeAnimation;
+        EventHandler.OnNextGiftColliderShake += ListenerOnNextGiftColliderShake;
     }
+
+    private void ListenerOnNextGiftColliderShake(int id)
+    {
+        if(id == this.id)
+        {
+            this.previousOpen = true;
+            this.isShaked = true;
+
+        }
+           
+        if ( id == this.id && this.isUnlock == true)
+        {
+           // this.isShaked = true;
+            print(" " + " " + this.id + isShaked);
+            GiftShakeAnimation();
+        }
+    }
+
     private void Update()
     {
         if(Input.GetMouseButtonDown(0))
@@ -31,10 +58,32 @@ public class ShakeGiftBox : MonoBehaviour
         }
         
     }
-    public async void ListenerOnGiftBoxShakeAnimation(int id)
+    public void ListenerOnGiftBoxShakeAnimation(int id)
     {
-        if (id == this.id)
+        if(this.id == id)
         {
+            this.isUnlock = true;
+            if(this.previousOpen == true && this.isShaked == true)
+            {
+                GiftShakeAnimation();
+            }
+
+        }
+        if(this.id == id && this.id == 10)
+        {
+            this.isShaked = true;
+            this.previousOpen = true;
+            GiftShakeAnimation();
+
+        }
+        
+       
+    }
+   public async void GiftShakeAnimation()
+    {
+        if (this.isShaked == true && previousOpen == true)
+        {
+
             Vector3 startPosition = transform.position;
             while (elapsedTime < duration)
             {
@@ -45,16 +94,36 @@ public class ShakeGiftBox : MonoBehaviour
                 print("Gift Shake Complete");
             }
             transform.position = startPosition;
+            isShaked = false;
         }
     }
-
     void ClickOnGiftBox()
     {
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(pos, Vector3.zero);
         if(hit && hit.collider != null)
         {
-            Debug.Log("hit with " + hit.collider.gameObject.name);
+            int id = hit.collider.gameObject.GetComponent<ShakeGiftBox>().id;
+            if(id == 10)
+            {
+                EventHandler.Instance.InvokeOnNextGiftColliderShake(50);
+            }
+            if(id == 50)
+            {
+                EventHandler.Instance.InvokeOnNextGiftColliderShake(200);
+
+            }
+            if(id == 200)
+            {
+                EventHandler.Instance.InvokeOnNextGiftColliderShake(400);
+
+            }
+            if(id == 400)
+            {
+                EventHandler.Instance.InvokeOnNextGiftColliderShake(800);
+
+            }
+
         }
     }
     

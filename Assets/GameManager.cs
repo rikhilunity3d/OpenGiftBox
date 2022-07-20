@@ -48,16 +48,12 @@ public class GameManager : MonoBehaviour
             print("Gift is 800");
             EventHandler.Instance.InvokeOnGiftBoxShakeAnimation(800);
         }
-        else
-        {
-            print("Game is complete");
-        }
+        
         value = value + (addValueAtClick * 7);
         SetFillData(value);
         SetClickCount(clickCount);
         //print("Click Count "+ clickCount);
         FillBar();
-        
     }
 
     public void onResetButtonClick()
